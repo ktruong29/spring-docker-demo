@@ -2,7 +2,6 @@
 FROM openjdk:17
 #Create a working dir (good practice)
 WORKDIR /app
-COPY cert.txt /app/cert.txt
 #Copy the jar from target folder and paste to /app directory (if not exist) inside the container
 COPY ./target/spring-docker.jar /app
 #Port in container to run the app (should be the same port in app.properties file)
