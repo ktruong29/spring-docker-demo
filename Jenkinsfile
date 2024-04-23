@@ -6,20 +6,20 @@ pipeline {
         maven "maven" //Define maven installation name from Dashboard -> Manage Jenkins -> Tools -> Maven installation
     }
 
+    environment {
+        APP_NAME = "spring-docker-cicd"
+        RELEASE_NUMBER = "1.0.0"
+        DOCKER_USER = "ketruong"
+        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE_NUMBER}-${BUILD_NUMBER}"
+    }
+
     stages {
         stage("SCM checkout") {
             steps {
                 //Use Pipeline Syntax helper
                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/ktruong29/spring-docker-demo.git']])
             }
-        }
-        
-        environment {
-            APP_NAME = "spring-docker-cicd"
-            RELEASE_NUMBER = "1.0.0"
-            DOCKER_USER = "ketruong"
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE_NUMBER}-${BUILD_NUMBER}"
         }
 
         stage("Build Process") {
@@ -28,7 +28,7 @@ pipeline {
                 bat "mvn clean install"
             }
         }
-        
+
         stage("Build Image") {
             steps {
                 script {
@@ -36,7 +36,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage("Deploy image to Hub") {
             steps {
                 withCredentials([string(credentialsId: 'dp', variable: 'dp')]) {
